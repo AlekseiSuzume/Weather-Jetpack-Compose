@@ -1,4 +1,4 @@
-package com.suzume.weatherjetpackcompose.ui.theme
+package com.suzume.weatherjetpackcompose.presentation.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

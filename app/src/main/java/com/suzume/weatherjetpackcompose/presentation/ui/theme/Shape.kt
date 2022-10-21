@@ -1,4 +1,4 @@
-package com.suzume.weatherjetpackcompose.ui.theme
+package com.suzume.weatherjetpackcompose.presentation.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
