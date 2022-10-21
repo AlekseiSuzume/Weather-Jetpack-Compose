@@ -16,12 +16,12 @@ interface ApiService {
     }
 
     @GET("forecast")
-    suspend fun loadWeather3(
+    suspend fun loadWeather(
         @Header("X-Yandex-API-Key") key: String = API_KEY,
         @Query("lat") lat: String = "55.75396",
         @Query("lon") lon: String = "37.620393",
         @Query("lang") lang: String = "ru_RU",
-        @Query("hours") hours: Boolean = false,
+        @Query("hours") hours: Boolean = true,
         @Query("extra") extra: Boolean = false,
     ): Response<WeatherDto>
 

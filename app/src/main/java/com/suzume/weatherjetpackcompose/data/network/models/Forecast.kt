@@ -10,8 +10,6 @@ data class Forecast(
     val dateTs: Int?,
     @SerializedName("parts")
     val parts: Parts?,
-    @SerializedName("sunrise")
-    val sunrise: String?,
-    @SerializedName("sunset")
-    val sunset: String?,
+    @SerializedName("hours")
+    val hours: List<Hour?>?,
 )
