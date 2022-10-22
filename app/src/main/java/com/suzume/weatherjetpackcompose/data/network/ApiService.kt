@@ -2,7 +2,6 @@ package com.suzume.weatherjetpackcompose.data.network
 
 
 import com.suzume.weatherjetpackcompose.data.network.models.WeatherDto
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
@@ -23,6 +22,6 @@ interface ApiService {
         @Query("lang") lang: String = "ru_RU",
         @Query("hours") hours: Boolean = true,
         @Query("extra") extra: Boolean = false,
-    ): Response<WeatherDto>
+    ): WeatherDto
 
 }
