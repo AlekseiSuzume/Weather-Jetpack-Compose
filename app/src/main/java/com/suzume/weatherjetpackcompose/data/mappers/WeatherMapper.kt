@@ -2,6 +2,8 @@ package com.suzume.weatherjetpackcompose.data.mappers
 
 
 import android.icu.text.DateFormat
+import android.icu.text.SimpleDateFormat
+import android.icu.util.TimeZone
 import com.suzume.weatherjetpackcompose.data.network.models.WeatherDto
 import com.suzume.weatherjetpackcompose.domain.model.*
 import java.util.*
@@ -10,7 +12,7 @@ fun WeatherDto.toWeatherEntity(): WeatherEntity {
     return WeatherEntity(
         cityName = this.geoObject?.province?.name ?: "",
         countryName = this.geoObject?.country?.name ?: "",
-        currentTime = this.nowDt?.substringAfter("T")?.substringBeforeLast(":"),
+        currentTime = getCurrentTime(),
         currentTemp = this.fact?.temp.toString(),
         currentIconId = this.fact?.iconId ?: "",
         currentCondition = this.fact?.condition ?: "",
@@ -50,7 +52,7 @@ fun WeatherDto.toWeatherEntity(): WeatherEntity {
         hours = mutableListOf<Hour>().apply {
             forecasts?.get(0)?.hours?.forEach {
                 add(Hour(
-                    hour = it?.hour,
+                    hour = it?.hour ?: "",
                     temp = it?.temp.toString(),
                     iconId = it?.iconId ?: ""
                 ))
@@ -66,3 +68,13 @@ private fun convertTimestampToDayOfWeek(timestamp: Int?): String {
         weekDay.substringBefore(",").replaceFirstChar { it.uppercase() }
     } ?: ""
 }
+
+private fun getCurrentTime(): String {
+    val currentTimeMillis = System.currentTimeMillis()
+    val date = Date(currentTimeMillis)
+    val pattern = "HH:mm"
+    val sdf = SimpleDateFormat(pattern, Locale.getDefault())
+    sdf.timeZone = TimeZone.getDefault()
+    return sdf.format(date)
+}
+
