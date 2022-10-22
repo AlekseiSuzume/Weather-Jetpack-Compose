@@ -3,14 +3,16 @@ package com.suzume.weatherjetpackcompose.data.repository
 import android.app.Application
 import android.location.Geocoder
 import com.suzume.weatherjetpackcompose.data.mappers.toWeatherEntity
-import com.suzume.weatherjetpackcompose.data.network.ApiFactory
+import com.suzume.weatherjetpackcompose.data.network.ApiService
 import com.suzume.weatherjetpackcompose.domain.repository.WeatherRepository
 import com.suzume.weatherjetpackcompose.domain.util.WeatherState
 import java.util.*
+import javax.inject.Inject
 
-class WeatherRepositoryImpl(private val application: Application) : WeatherRepository {
-
-    private val api = ApiFactory.getApiService()
+class WeatherRepositoryImpl @Inject constructor(
+    private val application: Application,
+    private val api: ApiService,
+) : WeatherRepository {
 
     override suspend fun loadWeatherUseCase(city: String): WeatherState {
         val coordinates = getCoordinatesFromCityName(city)
@@ -21,7 +23,6 @@ class WeatherRepositoryImpl(private val application: Application) : WeatherRepos
         } else {
             WeatherState.Error(response.message())
         }
-
     }
 
     private fun getCoordinatesFromCityName(city: String): List<String> {
