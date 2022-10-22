@@ -26,7 +26,7 @@ class MainActivity : ComponentActivity() {
         window.navigationBarColor = resources.getColor(R.color.transparent, theme)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        viewModel.loadData()
+        viewModel.loadData("Токио")
 
         setContent {
             WeatherJetpackComposeTheme {

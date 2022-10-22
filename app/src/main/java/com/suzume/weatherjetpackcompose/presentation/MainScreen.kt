@@ -22,7 +22,7 @@ import com.suzume.weatherjetpackcompose.presentation.utils.TextWithShadow
 @Preview
 @Composable
 fun preview() {
-    MainScreen(viewModel = MainViewModel())
+//    MainScreen(viewModel = MainViewModel())
 //    WeekWeatherScreen()
 }
 
