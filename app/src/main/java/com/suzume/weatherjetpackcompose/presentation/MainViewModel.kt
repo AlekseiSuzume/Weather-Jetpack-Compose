@@ -5,13 +5,16 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.suzume.weatherjetpackcompose.domain.usecases.LoadCoordinateUseCase
 import com.suzume.weatherjetpackcompose.domain.usecases.LoadWeatherUseCase
+import com.suzume.weatherjetpackcompose.domain.util.CoordinateState
 import com.suzume.weatherjetpackcompose.domain.util.WeatherState
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val loadWeatherUseCase: LoadWeatherUseCase,
+    private val loadCoordinateUseCase: LoadCoordinateUseCase,
 ) : ViewModel() {
 
     private val _searchBarState: MutableState<SearchBarState> =
@@ -32,20 +35,23 @@ class MainViewModel @Inject constructor(
         _searchTextState.value = newText
     }
 
-    fun loadData(city: String) {
-        viewModelScope.launch {
-            _weatherState.value = loadWeatherUseCase(city)
-            when (weatherState.value) {
-                is WeatherState.Progress -> {
-
-                }
-                is WeatherState.ResultValue -> {
-
-                }
-                is WeatherState.Error -> {
-
-                }
+    fun loadCoordinate(city: String) {
+        _weatherState.value = WeatherState.Progress
+        when (val coordinateState = loadCoordinateUseCase(city)) {
+            is CoordinateState.Success -> {
+                val lat = coordinateState.coordinates[0]
+                val lon = coordinateState.coordinates[1]
+                loadWeather(lat, lon)
             }
+            is CoordinateState.Error -> {
+                _weatherState.value = WeatherState.Error(coordinateState.message)
+            }
+        }
+    }
+
+    private fun loadWeather(lat: String, lon: String) {
+        viewModelScope.launch {
+            _weatherState.value = loadWeatherUseCase(lat, lon)
         }
     }
 

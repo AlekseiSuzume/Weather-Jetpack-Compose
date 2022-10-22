@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class LoadWeatherUseCase @Inject constructor(private val repository: WeatherRepository) {
 
-    suspend operator fun invoke(city: String): WeatherState {
-        return repository.loadWeatherUseCase(city)
+    suspend operator fun invoke(lat: String, lon: String): WeatherState {
+        return repository.loadWeatherUseCase(lat, lon)
     }
 }

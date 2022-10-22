@@ -3,7 +3,9 @@ package com.suzume.weatherjetpackcompose.presentation
 import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -11,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
@@ -19,18 +20,12 @@ import coil.decode.SvgDecoder
 import coil.request.ImageRequest
 import com.suzume.weatherjetpackcompose.presentation.utils.TextWithShadow
 
-@Preview
-@Composable
-fun preview() {
-//    MainScreen(viewModel = MainViewModel())
-//    WeekWeatherScreen()
-}
-
 @Composable
 fun MainScreen(viewModel: MainViewModel) {
 
     val searchBarState by viewModel.searchBarState
     val searchTextState by viewModel.searchTextState
+    val weatherState by viewModel.weatherState
 
     Scaffold(
         backgroundColor = Color.Transparent,
@@ -46,11 +41,12 @@ fun MainScreen(viewModel: MainViewModel) {
                 }
             )
         }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(),
+                .fillMaxHeight()
+                .padding(paddingValues),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             MainScreenInfo()
