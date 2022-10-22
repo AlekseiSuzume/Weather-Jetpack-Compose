@@ -6,6 +6,6 @@ import com.google.gson.annotations.SerializedName
 data class GeoObject(
     @SerializedName("country")
     val country: Country?,
-    @SerializedName("province")
-    val province: Province?
+    @SerializedName("locality")
+    val locality: Locality?
 )

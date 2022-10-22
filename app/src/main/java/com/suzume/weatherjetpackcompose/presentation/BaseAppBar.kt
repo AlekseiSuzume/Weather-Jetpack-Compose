@@ -78,7 +78,10 @@ private fun SearchAppBar(
                 imeAction = ImeAction.Search
             ),
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.White
+                textColor = Color.White,
+                backgroundColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent,
+                focusedIndicatorColor = Color.Transparent
             ),
             keyboardActions = KeyboardActions {
                 onSearchClicked(text)
