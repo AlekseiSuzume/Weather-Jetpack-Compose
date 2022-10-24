@@ -3,23 +3,25 @@ package com.suzume.weatherjetpackcompose.presentation
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
+import androidx.compose.material.Divider
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.decode.SvgDecoder
-import coil.request.ImageRequest
+import com.suzume.weatherjetpackcompose.domain.model.ForecastEntity
+import com.suzume.weatherjetpackcompose.domain.model.Hour
+import com.suzume.weatherjetpackcompose.domain.model.Part
+import com.suzume.weatherjetpackcompose.domain.util.WeatherState
+import com.suzume.weatherjetpackcompose.presentation.utils.SvgIconLoad
 
 @Composable
-fun WeekWeatherScreen() {
+fun WeekWeatherScreen(weatherState: WeatherState) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -27,119 +29,181 @@ fun WeekWeatherScreen() {
             bottomStart = 4.dp,
             bottomEnd = 4.dp,
         ),
-        backgroundColor = Color.White.copy(0.2f),
+        backgroundColor = Color.Gray.copy(0.5f),
         elevation = 0.dp
     ) {
         Column {
-            InfoWeekDayShort()
+            InfoWeekDayShort(weatherState)
         }
     }
 }
 
 @Composable
-fun InfoWeekDayShort() {
+fun InfoWeekDayShort(weatherState: WeatherState) {
+
+    if (weatherState is WeatherState.ResultValue) {
+        weatherState.weather?.let { state ->
+            Box(
+                modifier = Modifier
+                    .padding(
+                        start = 8.dp,
+                        end = 8.dp,
+                        bottom = 8.dp,
+                    )
+            ) {
+                Column {
+                    weatherState.weather.forecastEntities.forEachIndexed { index, forecast ->
+                        if (index == 0) {
+                            TodayInfo(forecast, state.hours)
+                        } else {
+                            DayInfo(forecast)
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun TodayInfo(forecastEntity: ForecastEntity, hours: List<Hour>) {
+    Divider(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(0.5.dp),
+        color = Color.DarkGray,
+    )
+    Spacer(modifier = Modifier.height(8.dp))
+    Text(
+        text = "Сегодня",
+        color = Color.White
+    )
+    Spacer(modifier = Modifier.height(8.dp))
     Box(
+        modifier = Modifier.background(Color.White.copy(0.0f))
+    ) {
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(hours) { hour ->
+                HourInfo(hour)
+            }
+        }
+    }
+    Column(
         modifier = Modifier
             .padding(
                 start = 8.dp,
                 end = 8.dp,
                 bottom = 8.dp,
             )
-            .drawBehind {
-                val strokeWidth = 2f
-                val x = size.width - strokeWidth
-                drawLine(
-                    color = Color.Gray,
-                    start = Offset(0f, 0f),
-                    end = Offset(x, 0f),
-                    strokeWidth = strokeWidth
-                )
-            },
     ) {
-        Column(
-            modifier = Modifier.padding(top = 8.dp)
-        ) {
-            Text(
-                text = "Сегодня",
-                color = Color.White
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Box(
-                modifier = Modifier.background(Color.White.copy(0.0f))
-            ) {
-                LazyRow(
-                ) {
-                    item {
-                        repeat(24) {
-                            InfoPerHour()
-                        }
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            InfoTimeOfDay()
-            Spacer(modifier = Modifier.height(8.dp))
-            InfoTimeOfDay()
-            Spacer(modifier = Modifier.height(8.dp))
-            InfoTimeOfDay()
-            Spacer(modifier = Modifier.height(8.dp))
-            InfoTimeOfDay()
+        Spacer(modifier = Modifier.height(8.dp))
+        forecastEntity.parts.forEach {
+            TimeOfDayInfo(it)
         }
     }
 }
 
 @Composable
-fun InfoTimeOfDay() {
-    Row(
+fun DayInfo(forecastEntity: ForecastEntity) {
+    Divider(
         modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .fillMaxWidth()
+            .height(0.5.dp),
+        color = Color.DarkGray,
+    )
+    Column(
+        modifier = Modifier
+            .padding(
+                start = 8.dp,
+                end = 8.dp,
+                bottom = 8.dp,
+            )
     ) {
+        Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "Утром",
+            text = forecastEntity.dayOfWeek,
             color = Color.White
         )
-        AsyncImage(
-            modifier = Modifier.size(32.dp),
-            model = ImageRequest.Builder(LocalContext.current)
-                .data("https://yastatic.net/weather/i/icons/funky/dark/ovc_-ra.svg")
-                .decoderFactory(SvgDecoder.Factory())
-                .build(),
-            contentDescription = null
-        )
-        Text(
-            text = "+7°",
-            color = Color.White
-        )
-        Text(
-            text = "5,7 м/с",
-            color = Color.White
-        )
+        Spacer(modifier = Modifier.height(8.dp))
+        forecastEntity.parts.forEach {
+            TimeOfDayInfo(it)
+        }
     }
 }
 
 @Composable
-private fun InfoPerHour() {
+fun TimeOfDayInfo(part: Part) {
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        )
+        {
+            Text(
+                text = part.name,
+                color = Color.White,
+                textAlign = TextAlign.Start
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        )
+        {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                SvgIconLoad(modifier = Modifier.size(32.dp), imageId = part.iconId)
+                Text(
+                    text = "${part.temp}°",
+                    color = Color.White,
+                    textAlign = TextAlign.End
+                )
+            }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        )
+        {
+            Text(
+                modifier = Modifier.align(Alignment.BottomEnd),
+                text = "${part.windSpeed} м/с",
+                color = Color.White,
+            )
+        }
+
+    }
+}
+
+
+@Composable
+private fun HourInfo(hour: Hour) {
     Box {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "12 ч",
+                text = hour.hour,
                 color = Color.White
             )
             Spacer(modifier = Modifier.height(4.dp))
-            AsyncImage(
-                modifier = Modifier.size(32.dp),
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data("https://yastatic.net/weather/i/icons/funky/dark/ovc_-ra.svg")
-                    .decoderFactory(SvgDecoder.Factory())
-                    .build(),
-                contentDescription = null
-            )
+            SvgIconLoad(modifier = Modifier.size(32.dp), imageId = hour.iconId)
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "16°",
+                text = "${hour.temp}°",
                 color = Color.White
             )
         }

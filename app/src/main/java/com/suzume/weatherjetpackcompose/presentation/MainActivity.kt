@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         window.navigationBarColor = resources.getColor(R.color.transparent, theme)
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
-        viewModel.loadCoordinate("Новосибирск")
+        viewModel.loadCoordinate(DEFAULT_CITY)
 
         setContent {
             WeatherJetpackComposeTheme {
@@ -38,4 +38,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+    companion object {
+
+        private const val DEFAULT_CITY = "Москва"
+
+    }
+
 }
